@@ -291,7 +291,7 @@ public class Gleitpunktzahl {
 	 * Beispiel: Bei 3 Mantissenbits wird die Zahl 10.11 * 2^-1 zu 1.10 * 2^0
 	 */
 	public void normalisiere() {
-            // The number is not infinite, NaN or null
+            // Check if number is infinite, NaN or null
             if (!(this.isInfinite() || this.isNaN() || this.isNull())) {
                 int maxMantisse, minMantisse;
                 maxMantisse = (int) Math.pow(2, sizeMantisse) - 1;
@@ -350,21 +350,24 @@ public class Gleitpunktzahl {
             // Check for infinity
             if (this.isInfinite() || r.isInfinite()) {
                 if (this.isInfinite() && r.isInfinite()) {
-                    // Both are infinite (NaN)
+                    // Both are infinite
                     if (this.vorzeichen != r.vorzeichen) {
-                        // Different signs, undefined
+                        // Different signs, result is undefined
                         result = new Gleitpunktzahl();
                         result.setNaN();
                     } else {
+                        // Same signs, result is positive or negative infinity
                         result = new Gleitpunktzahl(this);
                     }
+                // Determine the sign of result
                 } else if (this.isInfinite()){
                     result = new Gleitpunktzahl(this);
                 } else {
                     result = new Gleitpunktzahl(r);
                 }
                 return result;
-            }          
+            }
+            // Initialize help variables
             thisCopy = new Gleitpunktzahl(this);
             rCopy = new Gleitpunktzahl(r);
             result = new Gleitpunktzahl();
