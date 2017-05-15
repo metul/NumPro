@@ -21,7 +21,9 @@ public class FastMath {
 	 * In literature, several of those constants for floats or doubles can be
 	 * found. There's no optimal constant for all cases.
 	 */
-	private static int MAGIC_NUMBER = 1024;
+    
+        // Optimized magic number for 8 mantissa bits and 4 exponent bits
+	private static int MAGIC_NUMBER = 1335;
 
 	/**
 	 * belegt die MAGIC_NUMBER mit dem Wert magic
