@@ -49,8 +49,24 @@ public class FastMath {
 	 */
 	public static Gleitpunktzahl invSqrt(Gleitpunktzahl x) {
             Gleitpunktzahl result;
-            int temp;
-            temp = gleitpunktzahlToIEEE(x);
+            // Check for exceptional cases
+            if (x.isInfinite() || x.isNaN() || x.isNull()) {
+                result = new Gleitpunktzahl();
+                if (x.isNaN()) {
+                    result.setNaN();
+                } else if (x.isNull()) {
+                    // Positive by default because there is no +/- 0
+                    result.setInfinite(false);
+                } else {
+                    if (!x.vorzeichen) {
+                        result.setNull();
+                    } else {
+                        result.setNaN();
+                    }
+                }
+                return result;
+            }
+            int temp = gleitpunktzahlToIEEE(x);
             // Check for negative number
             if (x.vorzeichen) {
                 // Number is negative, return NaN
@@ -59,10 +75,8 @@ public class FastMath {
             } else {
                 // Divide by 2
                 temp >>= 1;
-                // Get inverse
-                temp = -temp;
-                // Add magic number
-                temp += MAGIC_NUMBER;
+                // Subtract from magic number
+                temp = MAGIC_NUMBER - temp;
                 result = new Gleitpunktzahl(iEEEToGleitpunktzahl(temp));
             }
             return result;
