@@ -372,6 +372,20 @@ public class Gleitpunktzahl {
                 }
                 return result;
             }
+            // Check for NaN
+            if (this.isNaN() || r.isNaN()) {
+                result = new Gleitpunktzahl();
+                result.setNaN();
+                return result;
+            }
+            // Check for null
+            if (this.isNull() || r.isNull()) {
+                if (this.isNull()) {
+                    return r;
+                } else {
+                    return this;
+                }
+            }
             // Initialize help variables
             thisCopy = new Gleitpunktzahl(this);
             rCopy = new Gleitpunktzahl(r);
@@ -421,6 +435,14 @@ public class Gleitpunktzahl {
 	 */
 	public Gleitpunktzahl sub(Gleitpunktzahl r) {
 		Gleitpunktzahl rInverse, result;
+                /** 
+                 * Check if second number is null 
+                 * NaN and infinity are already checked in add()            
+                 * Inverting sign by null will cause problem
+                 */
+                if (r.isNull()) {
+                    return this;
+                }
                 rInverse = new Gleitpunktzahl(r);
                 rInverse.vorzeichen = !rInverse.vorzeichen;
                 // Inverse sum
