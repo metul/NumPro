@@ -314,6 +314,11 @@ public class Gleitpunktzahl {
                         this.mantisse += 1;
                     }
                 }
+                // Mantissa is now in right form, check exponent again
+                if (this.exponent > maxExponent) {
+                    // Can not be displayed (infinity)
+                    this.setInfinite(this.vorzeichen);
+                }
             }
 	}
 
