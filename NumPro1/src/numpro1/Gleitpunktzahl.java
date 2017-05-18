@@ -291,8 +291,8 @@ public class Gleitpunktzahl {
 	 * Beispiel: Bei 3 Mantissenbits wird die Zahl 10.11 * 2^-1 zu 1.10 * 2^0
 	 */
 	public void normalisiere() {
-            // Check if number is infinite, NaN or null
-            if (!(this.isInfinite() || this.isNaN() || this.isNull())) {
+            // Number can not be normalised if mantissa is 0
+            if (this.mantisse != 0) {
                 int maxMantisse, minMantisse;
                 maxMantisse = (int) Math.pow(2, sizeMantisse) - 1;
                 minMantisse = (int) Math.pow(2, sizeMantisse - 1);
@@ -315,9 +315,13 @@ public class Gleitpunktzahl {
                     }
                 }
                 // Mantissa is now in right form, check exponent again
-                if (this.exponent > maxExponent) {
+                if (this.exponent >= maxExponent) {
                     // Can not be displayed (infinity)
                     this.setInfinite(this.vorzeichen);
+                } else if (this.exponent < 0) {
+                    // Too small to be displayed, round up to smallest possible value (absolute)
+                    this.exponent = 0;
+                    this.mantisse = minMantisse;
                 }
             }
 	}

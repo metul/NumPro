@@ -33,8 +33,15 @@ public class Test_Gleitpunktzahl {
 
 		Gleitpunktzahl x;
 		Gleitpunktzahl y;
-                Gleitpunktzahl max;
-                Gleitpunktzahl min;
+                Gleitpunktzahl testVariable1;
+                Gleitpunktzahl testVariable2;
+                /*
+                 * For mantissa size 6 and exponent size 3:
+                 * Max Gleitpunktzahl ~ 16 and Min Gleitpunktzahl ~ 0.125
+                 */
+                testVariable1 = new Gleitpunktzahl (32);
+                testVariable2 = new Gleitpunktzahl (1.0 / 8.0);
+                System.out.println(testVariable1 + " ~ " + testVariable2);
 		Gleitpunktzahl gleitref = new Gleitpunktzahl();
 		Gleitpunktzahl gleiterg;
 
@@ -64,19 +71,23 @@ public class Test_Gleitpunktzahl {
                         //Eigene Test: set Double
                         
                         //betragsmäßig kleinste Darstellbare Zahl
-                        min = new Gleitpunktzahl(1/8);
-                        gleitref = new Gleitpunktzahl(1/8);
-                        if(min.compareAbsTo(gleitref) != 0 
-                                        || min.vorzeichen != gleitref.vorzeichen){
-                                printErg("" + min.toDouble(), "" + gleitref.toDouble());
-                        }
+                        testVariable2 = new Gleitpunktzahl(1.0 / 8.0);
+                        gleitref = new Gleitpunktzahl(1.0 / 8.0);
+                        if(testVariable2.compareAbsTo(gleitref) != 0 
+                                        || testVariable2.vorzeichen != gleitref.vorzeichen){
+                                printErg("" + testVariable2.toDouble(), "" + gleitref.toDouble());
+                        } else {
+				System.out.println("    Richtiges Ergebnis\n");
+			}
                         //betragsmäßig größte Darstellbare Mantisse
-                        max= new Gleitpunktzahl (63);
+                        testVariable1= new Gleitpunktzahl (63);
                         gleitref = new Gleitpunktzahl (63);
-                        if(max.compareAbsTo(gleitref) != 0 
-                                        || max.vorzeichen != gleitref.vorzeichen){
-                                printErg("" + max.toDouble(), "" + gleitref.toDouble());
-                        }
+                        if(testVariable1.compareAbsTo(gleitref) != 0 
+                                        || testVariable1.vorzeichen != gleitref.vorzeichen){
+                                printErg("" + testVariable1.toDouble(), "" + gleitref.toDouble());
+                        } else {
+				System.out.println("    Richtiges Ergebnis\n");
+			}
                       
 
 		} catch (Exception e) {
@@ -109,23 +120,24 @@ public class Test_Gleitpunktzahl {
 			/*************
 			 * Eigene Tests einfuegen
 			 */
-                        max = new Gleitpunktzahl (63);
-                        min = new Gleitpunktzahl (1/8);
-                        gleitref = new Gleitpunktzahl(63+1/8);
-                        Gleitpunktzahl sum = max.add(min);
 			System.out.println("\n\nEIGENE TESTS: Addition \n\n");
+                        testVariable1 = new Gleitpunktzahl (63);
+                        testVariable2 = new Gleitpunktzahl (1.0 / 8.0);
+                        gleitref = new Gleitpunktzahl(63 + 1.0 / 8.0);
+                        Gleitpunktzahl sum = testVariable1.add(testVariable2);
                         
                         //Test, ob Ergebnis korrekt ist
+                                           
+                        System.out.println("sum = "+ sum.toString());
+                        System.out.println(testVariable1.toDouble()+" + "+testVariable2.toDouble()+" = " +sum.toDouble()+"\n");
                         
                         if (sum.compareAbsTo(gleitref) != 0
-					|| gleiterg.vorzeichen != gleitref.vorzeichen) {
-				printAdd(max.toString(), min.toString());
+					|| sum.vorzeichen != gleitref.vorzeichen) {
+				printAdd(testVariable1.toString(), testVariable2.toString());
 				printErg(sum.toString(), gleitref.toString());
 			} else {
 				System.out.println("    Richtiges Ergebnis\n");
 			}
-                        System.out.println("sum = "+ sum.toString());
-                        System.out.println(max.toDouble()+" + "+min.toDouble()+" = " +sum.toDouble()+"\n");
 
                               
 
@@ -161,22 +173,24 @@ public class Test_Gleitpunktzahl {
 			 * Eigene Tests einfuegen
 			 */
 
-			System.out.println("\n\nEIGENE TESTS: Subtraktion\n\n");
-                        max = new Gleitpunktzahl (63);
-                        min = new Gleitpunktzahl (50/16);
-                        gleitref = new Gleitpunktzahl(63-50/16);
-                        Gleitpunktzahl sub = max.sub(min); 
+			System.out.println("\n\nEIGENE TESTS: Subtraktion\n\n");                       
+                        testVariable1 = new Gleitpunktzahl (63);
+                        testVariable2 = new Gleitpunktzahl (50.0 / 16.0);
+                        gleitref = new Gleitpunktzahl(63 - 50.0 / 16.0);
+                        Gleitpunktzahl sub = testVariable1.sub(testVariable2); 
                         
                         // Test, ob Ergebnis korrekt ist
+                                            
+                        System.out.println("sub = "+ sub.toString());
+                        System.out.println(testVariable1.toDouble()+" - "+testVariable2.toDouble()+" = " +sub.toDouble()+"\n");
+                        
 			if (sub.compareAbsTo(gleitref) != 0
 					|| sub.vorzeichen != gleitref.vorzeichen) {
-				printSub(max.toString(), min.toString());
+				printSub(testVariable1.toString(), testVariable2.toString());
 				printErg(sub.toString(), gleitref.toString());
 			} else {
 				System.out.println("  Richtiges Ergebnis\n");
 			}
-                        System.out.println("sub = "+ sub.toString());
-                        System.out.println(max.toDouble()+" - "+min.toDouble()+" = " +sub.toDouble()+"\n");
 
 		} catch (Exception e) {
 			System.out.print("Exception bei der Auswertung des Ergebnis!!\n");
@@ -210,14 +224,13 @@ public class Test_Gleitpunktzahl {
 			/*************
 			 * Eigene Tests einfuegen
 			 */
-                        Gleitpunktzahl inf= new Gleitpunktzahl(63/(1/8));
 			System.out.println("\n\nEIGENE TESTS: Sonderfälle\n\n");
-                        System.out.println("63/(1/8) = " + inf);
+                        Gleitpunktzahl inf = new Gleitpunktzahl(63 / (1.0 / 8.0));
+                        System.out.println("63 / (1 / 8) = " + inf);
 
 
 		} catch (Exception e) {
-			System.out
-					.print("Exception bei der Auswertung des Ergebnis in der Klasse Gleitpunktzahl!!\n");
+			System.out.print("Exception bei der Auswertung des Ergebnis in der Klasse Gleitpunktzahl!!\n");
 		}
 
 	}
