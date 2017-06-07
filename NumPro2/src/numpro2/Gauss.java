@@ -3,6 +3,22 @@ package numpro2;
 
 
 public class Gauss {
+    
+        /*Diese Methode führt eine Summe durch 
+        *PARAMETER:
+        * n: obere Grenze
+        * i: laufvariable
+        * R: obere Dreiecksmatrix
+        * x: Lösungsvektor für Rücksubstitution
+        */
+        public static double sum(int n, int i, double[][]R, double[]x){
+            double sum=0;
+            for(int k=i+1;k<=n; k++){
+                i++;
+                sum+=R[i][k]*x[k]; //Teil der Formel für die Rückwärtssubstitution
+            }
+            return sum;
+        }
 
 	/**
 	 * Diese Methode soll die Loesung x des LGS R*x=b durch
@@ -13,7 +29,12 @@ public class Gauss {
 	 */
 	public static double[] backSubst(double[][] R, double[] b) {
 		//TODO: Diese Methode ist zu implementieren
-		return new double[2];
+                int n= b.length;
+                double[]x= new double[n];
+                for(int i=n-1; i>=0; n--){
+                    x[i]=(1/R[i][i])*(b[i]-sum(n-1,i,R,x));
+                }
+		return x;
 	}
 
 	/**
