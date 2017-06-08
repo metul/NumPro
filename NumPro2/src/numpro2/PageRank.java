@@ -13,9 +13,23 @@ public class PageRank {
 	 *      zufaellig irgendeine Seite zu besuchen
 	 */
 	public static double[][] buildProbabilityMatrix(int[][] L, double rho) {
-		//TODO: Diese Methode ist zu implementieren
-		return new double[2][2];
+		
+                int n=L.length;
+                double[][]A= new double[n][n]; //our proability matrix
+                for(int i=0; i<n; i++){
+                    for(int j=0; j<n; j++){
+                        A[i][j]=(1-rho)*L[i][j]+(rho/n);
+                    }
+                }
+		return A;
 	}
+        public static double vectorsum(int k, int n, double[]vec){
+            double result=0;
+            for(int i=k; i<=n; i++){
+                result+=vec[i];
+            }
+            return result;
+        } 
 
 	/**
 	 * Diese Methode berechnet die PageRanks der einzelnen Seiten,
@@ -29,8 +43,24 @@ public class PageRank {
 	 *      
 	 */
 	public static double[] rank(int[][] L, double rho) {
-		//TODO: Diese Methode ist zu implementieren
-		return new double[2];
+                int n=L.length;
+                double[]p=new double[n];
+		//Matrix(A-I) aufstellen
+                double[][]A= new double[n][n];
+                A=buildProbabilityMatrix(L,rho);
+                int j=0; //Indexvariable
+                for(int i=0; i<n; i++){
+                    A[i][j]-=1;
+                    j++;
+                }
+                //singuläre Matrix(A-I) lösen für (A-I)p=0
+                p=Gauss.solveSing(A);
+                //evtl noch testen ob p!=0 ?
+                //p normieren
+                double lambda=1/vectorsum(0,n-1,p);
+                for(int i=0; i<n; i++)
+                    p[i]*=lambda;
+		return p;
 	}
 
 	/**
