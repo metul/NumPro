@@ -53,7 +53,7 @@ public class Gauss {
 	 * b: Ein Vektor der Laenge n
 	 */
 	public static double[] backSubst(double[][] R, double[] b) {
-		//TODO: Diese Methode ist zu implementieren
+		
                 int n= b.length;
                 double[]x= new double[n];
                 for(int i=n-1; i>=0; n--){
@@ -84,6 +84,12 @@ public class Gauss {
                 for(int k=0; k<n; k++){
                     //Betragsgrößtes Element ermitteln
                     j=findmaxIndex(k,A);
+                    if(solved[k][j]==0){
+                      double[] zero=new double[n];
+                      for(int i=0; i<n; i++)
+                          zero[i]=0;
+                      return  zero;
+                    }
                     if(j!=k)
                         solved=switchRow(j,k,A,solved);
                 //Zeileneliminierung
@@ -116,7 +122,7 @@ public class Gauss {
 	 * A: Eine singulaere Matrix der Groesse n x n 
 	 */
 	public static double[] solveSing(double[][] A) {
-		//TODO: Diese Methode ist zu implementieren
+		
 		return new double[2];
 	}
 
