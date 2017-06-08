@@ -13,20 +13,48 @@ public class PageRank {
 	 *      zufaellig irgendeine Seite zu besuchen
 	 */
 	public static double[][] buildProbabilityMatrix(int[][] L, double rho) {
-		
-                int n=L.length;
-                double[][]A= new double[n][n]; //our proability matrix
-                for(int i=0; i<n; i++){
-                    for(int j=0; j<n; j++){
-                        A[i][j]=(1-rho)*L[i][j]+(rho/n);
+	
+            int n = L.length;
+            // Initialise probability matrix
+            double[][] A = LinkMatrixToProbabilityMatrix(L);
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    A[i][j] = (1 - rho) * A[i][j] + (rho / n);
+                }
+            }
+            return A;
+	}
+        
+        public static double[][] LinkMatrixToProbabilityMatrix(int[][] L) {
+            int n = L.length;
+            double[][] A = new double[n][n];
+            double[] sumVec = new double[n];
+            double sum;
+            // Calculate link count for each site
+            for (int x = 0; x < n; x++) {
+                sum = 0;
+                for (int y = 0; y < n; y++) {
+                    if (L[y][x] == 1) {
+                        sum++;
                     }
                 }
-		return A;
-	}
-        public static double vectorsum(int k, int n, double[]vec){
-            double result=0;
-            for(int i=k; i<=n; i++){
-                result+=vec[i];
+                sumVec[x] = sum;
+            }
+            // Calculate and write probabilities
+            for (int x = 0; x < n; x++) {
+                for (int y = 0; y < n; y++) {
+                    if (L[y][x] == 1) {
+                        A[y][x] = 1 / sumVec[x];
+                    }
+                }
+            }
+            return A;
+        }
+        
+        public static double vectorsum(int k, int n, double[] vec){
+            double result = 0;
+            for (int i = k; i <= n; i++) {
+                result += vec[i];
             }
             return result;
         } 
@@ -43,24 +71,27 @@ public class PageRank {
 	 *      
 	 */
 	public static double[] rank(int[][] L, double rho) {
-                int n=L.length;
-                double[]p=new double[n];
-		//Matrix(A-I) aufstellen
-                double[][]A= new double[n][n];
-                A=buildProbabilityMatrix(L,rho);
-                int j=0; //Indexvariable
-                for(int i=0; i<n; i++){
-                    A[i][j]-=1;
-                    j++;
-                }
-                //singuläre Matrix(A-I) lösen für (A-I)p=0
-                p=Gauss.solveSing(A);
-                //evtl noch testen ob p!=0 ?
+            int n = L.length;
+            double[] p = new double[n];
+            //Matrix(A-I) aufstellen
+            double[][] A = new double[n][n];
+            A = buildProbabilityMatrix(L, rho);
+            int j = 0; // Indexvariable
+            for (int i = 0; i < n; i++) {
+                A[i][j] -= 1;
+                j++;
+            }
+            //singuläre Matrix(A-I) lösen für (A-I)p=0
+            p = Gauss.solveSing(A);
+            
+            if (!Gauss.isNullVector(p)) {     
                 //p normieren
-                double lambda=1/vectorsum(0,n-1,p);
-                for(int i=0; i<n; i++)
-                    p[i]*=lambda;
-		return p;
+                double lambda = 1 / vectorsum(0, n - 1, p);
+                for (int i = 0; i < n; i++) {
+                    p[i] *= lambda;
+                }
+            }
+            return p;
 	}
 
 	/**

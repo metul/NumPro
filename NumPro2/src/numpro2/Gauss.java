@@ -12,7 +12,6 @@ public class Gauss {
 	 * b: Ein Vektor der Laenge n
 	 */
 	public static double[] backSubst(double[][] R, double[] b) {
-		//TODO: Diese Methode ist zu implementieren
                 double[] x = new double[b.length];
                 double tmp;
                 for (int i = b.length - 1; i >= 0; i--) {
@@ -97,6 +96,15 @@ public class Gauss {
                 result[i] = a[i] * multiplier;
             }
             return result;
+        }
+        
+        public static boolean isNullVector(double[] v) {
+            for (int i = 0; i < v.length; i++) {
+                if (v[i] != 0) {
+                    return false; 
+                }
+            }
+            return true;
         }
 
 	/**
