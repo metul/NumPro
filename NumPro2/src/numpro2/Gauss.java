@@ -3,47 +3,6 @@ package numpro2;
 
 
 public class Gauss {
-    
-        /*Diese Methode führt eine Summe durch 
-        *PARAMETER:
-        * n: obere Grenze
-        * i: laufvariable
-        * R: obere Dreiecksmatrix
-        * x: Lösungsvektor für Rücksubstitution
-        */
-        private static double sum(int n, int i, double[][]R, double[]x){
-            double sum=0;
-            for(int k=i+1;k<=n; k++){
-                i++;
-                sum+=R[i][k]*x[k]; //Teil der Formel für die Rückwärtssubstitution
-            }
-            return sum;
-        }
-        /*Diese Methode sucht nach dem Index des Betragsmäßig größten Element
-        * innerhalb einer Spalte einer Matrix
-        * PARAMETER: 
-        * k: Startindex
-        * A: nxn Matrix
-        */
-        private static int findmaxIndex(int k, double[][]A){
-            int n=A.length;
-            int maxindex=k;
-            double max=Math.abs(A[k][k]);
-            for(int i=k; i<n; i++){
-                if(Math.abs(A[i][k])>max){
-                    max=Math.abs(A[i][k]);
-                    maxindex=i;
-                }
-            }
-            return maxindex;
-        }
-        private static double[][] switchRow(int row1, int row2, double[][]src, double[][]dest){
-            for(int i=0; i<src.length; i++){
-                dest[row2][i]=src[row1][i];
-                dest[row1][i]=src[row2][i];
-            }
-            return dest;
-        }
 
 	/**
 	 * Diese Methode soll die Loesung x des LGS R*x=b durch
@@ -53,11 +12,15 @@ public class Gauss {
 	 * b: Ein Vektor der Laenge n
 	 */
 	public static double[] backSubst(double[][] R, double[] b) {
-		
-                int n= b.length;
-                double[]x= new double[n];
-                for(int i=n-1; i>=0; n--){
-                    x[i]=(1/R[i][i])*(b[i]-sum(n-1,i,R,x));
+		//TODO: Diese Methode ist zu implementieren
+                double[] x = new double[b.length];
+                double tmp;
+                for (int i = b.length - 1; i >= 0; i--) {
+                    tmp = 0;
+                    for (int j = i + 1; j < b.length; j++) {
+                        tmp +=  R[i][j] *  x[j];
+                    }
+                    x[i] = (b[i] - tmp) / R[i][i];
                 }
 		return x;
 	}
@@ -70,39 +33,71 @@ public class Gauss {
 	 * b: Ein Vektor der Laenge n
 	 */
 	public static double[] solve(double[][] A, double[] b) {
-                int n=b.length;
-                int j=0; //indexvariable
-                double[][] solved = new double[n][n]; //A als obere Dreiecksmatrix
-                
-                //copy Array
-                for(int i=0; i<n; i++){
-                    for(int l=0; l<n; l++){
-                        solved[i][l]=A[i][l];
+		double[] x = new double[b.length];
+                // Create augmented matrix
+                double[][] augMat = new double[A.length][A[0].length + 1];
+                int augMatRow = augMat.length;
+                int augMatColumn = augMat[0].length;
+                for (int i = 0; i < augMatRow; i++) {
+                    for (int j = 0; j < augMatColumn - 1; j++) {
+                        augMat[i][j] = A[i][j];
                     }
+                    augMat[i][augMat[0].length - 1] = b[i];
                 }
-                //Spaltenpivotiesierung beginnt
-                for(int k=0; k<n; k++){
-                    //Betragsgrößtes Element ermitteln
-                    j=findmaxIndex(k,A);
-                    if(solved[k][j]==0){
-                      double[] zero=new double[n];
-                      for(int i=0; i<n; i++)
-                          zero[i]=0;
-                      return  zero;
-                    }
-                    if(j!=k)
-                        solved=switchRow(j,k,A,solved);
-                //Zeileneliminierung
-                    for(int i=k+1; i<n; i++){
-                        for(int l=0; l<n; l++){
-                            solved[i][l]-=(solved[i][k]/solved[k][k])*solved[k][l];
+                // Put augmented matrix into upper triangle form
+                for (int k = 0; k < augMatColumn - 1; k++) {
+                    // Find pivot row
+                    double biggestElement = augMat[k][k];
+                    int pivotRow = k;
+                    for (int j = 1; j < augMatRow; j++) {
+                        if (Math.abs(augMat[j][k]) > Math.abs(biggestElement)) {
+                            biggestElement = augMat[j][k];
+                            pivotRow = j;
                         }
                     }
+                    // Switch rows
+                    double[] tmp = augMat[k];
+                    augMat[k] = augMat[pivotRow];
+                    augMat[pivotRow] = tmp;
+                    // Subtraction
+                    for (int i = k + 1; i < augMatRow; i++) {
+                        if (augMat[k][k] != 0) {
+                            augMat[i] = ArraySubtraction(augMat[i], ArrayMultiplication(augMat[k], augMat[i][k] / augMat[k][k]));
+                        }                      
+                    }
                 }
-                //solved hat jetzt die Form einer oberen Dreiecksmatrix
-		return backSubst(solved,b);
+                // Solve the system
+                double[][] R = new double[A.length][A[0].length];
+                double[] bNew = new double[b.length];
+                // Write R
+                for (int i = 0; i < R.length; i++) {
+                    for (int j = 0; j < R[0].length; j++) {
+                        R[i][j] = augMat[i][j];
+                    }
+                }
+                // Write b
+                for (int i = 0; i < b.length; i++) {
+                    bNew[i] = augMat[i][augMatColumn - 1];
+                }
+                x = backSubst(R, b);
+		return x;
 	}
         
+        public static double[] ArraySubtraction(double[] a, double[] b) {
+            double[] result = new double[a.length];
+            for (int i = 0; i < result.length; i++) {
+                result[i] = a[i] - b[i];
+            }
+            return result;
+        }
+        
+        public static double[] ArrayMultiplication(double[] a, double multiplier) {
+            double[] result = new double[a.length];
+            for (int i = 0; i < result.length; i++) {
+                result[i] = a[i] * multiplier;
+            }
+            return result;
+        }
 
 	/**
 	 * Diese Methode soll eine Loesung p!=0 des LGS A*p=0 ermitteln. A ist dabei
@@ -122,8 +117,62 @@ public class Gauss {
 	 * A: Eine singulaere Matrix der Groesse n x n 
 	 */
 	public static double[] solveSing(double[][] A) {
-		
-		return new double[2];
+		double[][] tmpA = A;
+                int tmpARow = tmpA.length;
+                int tmpAColumn = tmpA[0].length;
+                // Put matrix into upper triangle form
+                // TSize flag
+                int TSize = -1;
+                upperTriangle:
+                for (int k = 0; k < tmpAColumn; k++) {
+                    // Find pivot row
+                    double biggestElement = tmpA[k][k];
+                    int pivotRow = k;
+                    for (int j = 1; j < tmpARow; j++) {
+                        if (Math.abs(tmpA[j][k]) > Math.abs(biggestElement)) {
+                            biggestElement = tmpA[j][k];
+                            pivotRow = j;
+                        }
+                    }
+                    // Switch rows
+                    double[] tmp = tmpA[k];
+                    tmpA[k] = tmpA[pivotRow];
+                    tmpA[pivotRow] = tmp;
+                    // Subtraction
+                    for (int i = k + 1; i < tmpARow; i++) {
+                        if (tmpA[k][k] != 0) {
+                            tmpA[i] = ArraySubtraction(tmpA[i], ArrayMultiplication(tmpA[k], tmpA[i][k] / tmpA[k][k]));
+                        } else {
+                            TSize = k;
+                            break upperTriangle;
+                        }                      
+                    }
+                }
+                double[] result = new double[A[0].length];
+                // Return (x, 1, 0 ... 0)^T if A not invertible, else return null vector
+                if (TSize != -1) {     
+                    double[][] T = new double[TSize][TSize];
+                    // Write T
+                    for (int y = 0; y < TSize; y++) {
+                        for (int x = 0; x < TSize; x++) {
+                            T[y][x] = tmpA[y][x];
+                        }
+                    }
+                    double[] v = new double [TSize];
+                    // Write v
+                    for (int i = 0; i < TSize; i++) {
+                            v[i] = tmpA[i][TSize];
+                    }
+                    // Solve Tx = -v;
+                    double[] negV = ArrayMultiplication(v, -1);
+                    double[] x = backSubst(T, negV);
+                    // Write x into result
+                    for (int i = 0; i < x.length; i++) {
+                        result[i] = x[i];
+                    }
+                    result[x.length] = 1;
+                }
+		return result;
 	}
 
 	/**
