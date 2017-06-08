@@ -11,13 +11,38 @@ public class Gauss {
         * R: obere Dreiecksmatrix
         * x: Lösungsvektor für Rücksubstitution
         */
-        public static double sum(int n, int i, double[][]R, double[]x){
+        private static double sum(int n, int i, double[][]R, double[]x){
             double sum=0;
             for(int k=i+1;k<=n; k++){
                 i++;
                 sum+=R[i][k]*x[k]; //Teil der Formel für die Rückwärtssubstitution
             }
             return sum;
+        }
+        /*Diese Methode sucht nach dem Index des Betragsmäßig größten Element
+        * innerhalb einer Spalte einer Matrix
+        * PARAMETER: 
+        * k: Startindex
+        * A: nxn Matrix
+        */
+        private static int findmaxIndex(int k, double[][]A){
+            int n=A.length;
+            int maxindex=k;
+            double max=Math.abs(A[k][k]);
+            for(int i=k; i<n; i++){
+                if(Math.abs(A[i][k])>max){
+                    max=Math.abs(A[i][k]);
+                    maxindex=i;
+                }
+            }
+            return maxindex;
+        }
+        private static double[][] switchRow(int row1, int row2, double[][]src, double[][]dest){
+            for(int i=0; i<src.length; i++){
+                dest[row2][i]=src[row1][i];
+                dest[row1][i]=src[row2][i];
+            }
+            return dest;
         }
 
 	/**
@@ -45,9 +70,33 @@ public class Gauss {
 	 * b: Ein Vektor der Laenge n
 	 */
 	public static double[] solve(double[][] A, double[] b) {
-		//TODO: Diese Methode ist zu implementieren
-		return new double[2];
+                int n=b.length;
+                int j=0; //indexvariable
+                double[][] solved = new double[n][n]; //A als obere Dreiecksmatrix
+                
+                //copy Array
+                for(int i=0; i<n; i++){
+                    for(int l=0; l<n; l++){
+                        solved[i][l]=A[i][l];
+                    }
+                }
+                //Spaltenpivotiesierung beginnt
+                for(int k=0; k<n; k++){
+                    //Betragsgrößtes Element ermitteln
+                    j=findmaxIndex(k,A);
+                    if(j!=k)
+                        solved=switchRow(j,k,A,solved);
+                //Zeileneliminierung
+                    for(int i=k+1; i<n; i++){
+                        for(int l=0; l<n; l++){
+                            solved[i][l]-=(solved[i][k]/solved[k][k])*solved[k][l];
+                        }
+                    }
+                }
+                //solved hat jetzt die Form einer oberen Dreiecksmatrix
+		return backSubst(solved,b);
 	}
+        
 
 	/**
 	 * Diese Methode soll eine Loesung p!=0 des LGS A*p=0 ermitteln. A ist dabei
