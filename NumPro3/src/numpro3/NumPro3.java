@@ -16,6 +16,11 @@ public class NumPro3 {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+         double[]x = {0,1,2};
+            double[]y = {3,0,1};
+            NewtonPolynom newton = new NewtonPolynom(x,y);
+            for(int i=0; i<x.length; i++)
+                System.out.println(newton.a[i]);
     }
     
 }

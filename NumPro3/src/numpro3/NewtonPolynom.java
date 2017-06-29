@@ -89,7 +89,25 @@ public class NewtonPolynom implements InterpolationMethod {
 	 */
 	private void computeCoefficients(double[] y) {
 		/* TODO: diese Methode ist zu implementieren */
+                if(y.length==0)
+                    return;
+                int n= y.length*y.length;
+                
+                double[] arr = new double[n];   //array für dreieckschema
+                for(int k=0; k<y.length; k++){
+                    for(int i=0; i<y.length; i++){
+                        if(k==0)
+                            arr[i]=y[i];
+                        else
+                            arr[k*y.length+i]=(arr[k*y.length+i-(y.length-1)]-arr[(k-1)*y.length+i])/(this.x[(k+i)%x.length]-this.x[i]);
+                    }
+                }
+                this.a = new double[y.length];
+                for(int i=0; i<y.length; i++){
+                    this.a[i]=arr[i*y.length];
+                }
 	}
+       
 
 	/**
 	 * Gibt die Koeffizienten des Newton-Polynoms a zurueck
