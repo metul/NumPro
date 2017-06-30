@@ -19,8 +19,19 @@ public class NumPro3 {
          double[]x = {0,1,2};
             double[]y = {3,0,1};
             NewtonPolynom newton = new NewtonPolynom(x,y);
-            for(int i=0; i<x.length; i++)
+            for(int i=0; i<newton.x.length; i++){
                 System.out.println(newton.a[i]);
+            }
+            for(int i=0; i<newton.x.length; i++)
+                System.out.print("f["+i+"]= "+newton.f[i]+"   ");
+            System.out.print('\n');
+            newton.addSamplingPoint(1.5, 0);
+            for(int i=0; i<newton.x.length; i++){
+                System.out.println(newton.a[i]);
+            }
+            for(int i=0; i<newton.x.length; i++)
+                System.out.print("f["+i+"]= "+newton.f[i]+"   ");
+            System.out.print('\n');
     }
     
 }
