@@ -188,6 +188,13 @@ public class NewtonPolynom implements InterpolationMethod {
 	@Override
 	public double evaluate(double z) {
 		/* TODO: diese Methode ist zu implementieren */
-		return 0.0;
+                int n=this.a.length;
+                double result=this.a[n-2]+(z-this.x[n-2])*this.a[n-1];
+                for(int i=n-3; i>=0; i--){
+                    result*=(z-this.x[i]);
+                    result+=this.a[i];
+                }
+               
+		return result;
 	}
 }

@@ -25,6 +25,8 @@ public class NumPro3 {
             for(int i=0; i<newton.x.length; i++)
                 System.out.print("f["+i+"]= "+newton.f[i]+"   ");
             System.out.print('\n');
+            System.out.println("p(2)= "+newton.evaluate(2.0));
+            /*
             newton.addSamplingPoint(1.5, 0);
             for(int i=0; i<newton.x.length; i++){
                 System.out.println(newton.a[i]);
@@ -32,6 +34,7 @@ public class NumPro3 {
             for(int i=0; i<newton.x.length; i++)
                 System.out.print("f["+i+"]= "+newton.f[i]+"   ");
             System.out.print('\n');
+*/
     }
     
 }
