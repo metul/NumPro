@@ -89,7 +89,29 @@ public class NewtonPolynom implements InterpolationMethod {
 	 */
 	private void computeCoefficients(double[] y) {
 		/* TODO: diese Methode ist zu implementieren */
+                if(y.length==0)
+                    return;
+                int n= y.length*y.length;
+                
+                double[] arr = new double[n];   //array für dreieckschema
+                for(int k=0; k<y.length; k++){
+                    for(int i=0; i<y.length; i++){
+                        if(k==0)
+                            arr[i]=y[i];
+                        else
+                            arr[k*y.length+i]=(arr[k*y.length+i-(y.length-1)]-arr[(k-1)*y.length+i])/(this.x[(k+i)%x.length]-this.x[i]);
+                    }
+                }
+                this.a = new double[y.length];
+                for(int i=0; i<y.length; i++){
+                    this.a[i]=arr[i*y.length]; 
+                }
+                this.f = new double[y.length];
+                for(int i=0; i<y.length; i++){
+                    this.f[i]=arr[n-1-((i+1)*(y.length-1))];
+                }
 	}
+       
 
 	/**
 	 * Gibt die Koeffizienten des Newton-Polynoms a zurueck
@@ -123,6 +145,39 @@ public class NewtonPolynom implements InterpolationMethod {
 	 */
 	public void addSamplingPoint(double x_new, double y_new) {
 		/* TODO: diese Methode ist zu implementieren */
+                boolean x_is_new=true;
+                for(int i=0; i<this.x.length; i++){
+                    if(this.x[i]==x_new)
+                        x_is_new=false;
+                }
+               
+                if(x_is_new){
+                    //x[] aktualisieren
+                    double[]tmp = new double[this.x.length+1];
+                    tmp=Arrays.copyOf(this.x, this.x.length+1);
+                    tmp[this.x.length]=x_new;
+                    this.x= new double[tmp.length];
+                    this.x= Arrays.copyOf(tmp, tmp.length);
+                    
+                    //f[] aktualisieren
+                    //tmp= new double[this.f.length+1];                   
+                    for(int i=tmp.length-1; i>=0; i--){
+                        if(i==tmp.length-1)
+                             tmp[tmp.length-1]=y_new;
+                        else
+                            tmp[i]=(tmp[i+1]-this.f[i])/(this.x[this.x.length-1]-this.x[i]); 
+                    }
+                    this.f= new double[tmp.length];
+                    this.f= Arrays.copyOf(tmp, tmp.length);
+                    
+                    //a[] aktualisieren
+                    tmp=Arrays.copyOf(this.a, a.length+1);
+                    tmp[tmp.length-1]=this.f[0];        //neuer Koeffizent
+                    this.a= new double[tmp.length];
+                    this.a= Arrays.copyOf(tmp, tmp.length);
+                } 
+                
+                
 	}
 
 	/**
@@ -133,6 +188,13 @@ public class NewtonPolynom implements InterpolationMethod {
 	@Override
 	public double evaluate(double z) {
 		/* TODO: diese Methode ist zu implementieren */
-		return 0.0;
+                int n=this.a.length;
+                double result=this.a[n-2]+(z-this.x[n-2])*this.a[n-1];
+                for(int i=n-3; i>=0; i--){
+                    result*=(z-this.x[i]);
+                    result+=this.a[i];
+                }
+               
+		return result;
 	}
 }
