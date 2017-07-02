@@ -85,6 +85,47 @@ public class CubicSpline implements InterpolationMethod {
 	 */
 	public void computeDerivatives() {
 		/* TODO: diese Methode ist zu implementieren */
+                // Build A and c
+                int size = yprime.length - 2; 
+                double[][] A = new double[size][size];
+                double[] c = new double[size];
+                // A
+                for (int i = 0; i < size - 1; i++) {
+                    // Main diagonal
+                    A[i][i] = 4.0;
+                    // Below and above
+                    A[i + 1][i] = 1.0;
+                    A[i][i + 1] = 1.0;
+                }
+                A[size - 1][size - 1] = 4.0;
+                // c
+                c[0] = y[2] - y[0] - (h / 3.0) * yprime[0];
+                c[size - 1] = y[yprime.length - 1] - y[yprime.length - 3] - (h / 3.0) * yprime[yprime.length - 1];
+                for (int i = 1; i < size - 1; i++){
+                    c[i] = y[i + 2] - y[i]; 
+                }
+                for (int i = 0; i < size; i++) {
+                    c[i] *= (3.0 / h);
+                }
+                // Thomas Algorithm (modified for given tridiagonal matrix)
+                double[] aboveDiagonal = new double[size - 1];
+                double[] cHelp = new double[size];
+                double[] result = new double[size];
+                aboveDiagonal[0] = 1.0 / 4.0;
+                for (int i = 1; i < size - 1; i++) {
+                    aboveDiagonal[i] = 1.0 / (4.0 - 1.0 * aboveDiagonal[i - 1]);
+                }
+                cHelp[0] = c[0] / 4.0;
+                for (int i = 1; i < size; i++) {
+                    cHelp[i] = (c[i] - 1.0 * cHelp[i - 1]) / (4.0 - 1.0 * aboveDiagonal[i - 1]);
+                }
+                // BackSub
+                result[size - 1] = cHelp[size - 1];
+                for (int i = size - 2; i >= 0; i--) {
+                    result[i] = cHelp[i] - aboveDiagonal[i] * result[i + 1];
+                }
+            // Write result into yprime
+            System.arraycopy(result, 0, yprime, 1, result.length);
 	}
 
 	/**
@@ -95,7 +136,25 @@ public class CubicSpline implements InterpolationMethod {
 	 */
 	@Override
 	public double evaluate(double z) {
-		/* TODO: diese Methode ist zu implementieren */
-		return 0.0;
+		/* TODO: diese Methode ist zu implementieren */          
+                if (z < a) {
+                    return y[0];
+                }
+                if (z > b) {
+                    return y[y.length - 1];
+                }		
+                int interval = (int) ((z - a) / h);
+                double prevIDX = a + interval * h;
+                // Transform interval
+                double t = (z - prevIDX) / h;
+                // Calculate H_i(t)
+                double H_0 = 1 - 3 * Math.pow(t, 2) + 2 * Math.pow(t, 3);
+                double H_1 = 3 * Math.pow(t, 2) - 2 * Math.pow(t, 3);
+                double H_2 = t - 2 * Math.pow(t, 2) + Math.pow(t, 3);
+                double H_3 = Math.pow(t, 3) - Math.pow(t, 2);
+                // Evaluate polynom q 
+                double q = y[interval] * H_0 + y[interval + 1] * H_1 +
+                        h * yprime[interval] * H_2 + h * y[interval + 1] * H_3;
+		return q;
 	}
 }
