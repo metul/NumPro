@@ -108,24 +108,36 @@ public class CubicSpline implements InterpolationMethod {
                     c[i] *= (3.0 / h);
                 }
                 // Thomas Algorithm (modified for given tridiagonal matrix)
-                double[] aboveDiagonal = new double[size - 1];
-                double[] cHelp = new double[size];
-                double[] result = new double[size];
-                aboveDiagonal[0] = 1.0 / 4.0;
-                for (int i = 1; i < size - 1; i++) {
-                    aboveDiagonal[i] = 1.0 / (4.0 - 1.0 * aboveDiagonal[i - 1]);
-                }
-                cHelp[0] = c[0] / 4.0;
-                for (int i = 1; i < size; i++) {
-                    cHelp[i] = (c[i] - 1.0 * cHelp[i - 1]) / (4.0 - 1.0 * aboveDiagonal[i - 1]);
-                }
-                // BackSub
-                result[size - 1] = cHelp[size - 1];
-                for (int i = size - 2; i >= 0; i--) {
-                    result[i] = cHelp[i] - aboveDiagonal[i] * result[i + 1];
-                }
-            // Write result into yprime
-            System.arraycopy(result, 0, yprime, 1, result.length);
+                if (n > 2) {
+                    double[] aboveDiagonal = new double[size - 1];
+                    double[] cHelp = new double[size];
+                    double[] result = new double[size];
+                    aboveDiagonal[0] = 1.0 / 4.0;
+                    for (int i = 1; i < size - 1; i++) {
+                        aboveDiagonal[i] = 1.0 / (4.0 - 1.0 * aboveDiagonal[i - 1]);
+                    }
+                    cHelp[0] = c[0] / 4.0;
+                    for (int i = 1; i < size; i++) {
+                        cHelp[i] = (c[i] - 1.0 * cHelp[i - 1]) / (4.0 - 1.0 * aboveDiagonal[i - 1]);
+                    }
+                    // BackSub
+                    result[size - 1] = cHelp[size - 1];
+                    for (int i = size - 2; i >= 0; i--) {
+                        result[i] = cHelp[i] - aboveDiagonal[i] * result[i + 1];
+                    }
+                    // Write result into yprime
+                    System.arraycopy(result, 0, yprime, 1, result.length);
+                } else { 
+                    /** 
+                     * n = 2, A = [4]
+                     * c = (3 / h) * [y_2 - y_0 - (h / 3) * yprime_0] or c = (3 / h) * [y_2 - y_0 - (h / 3) * yprime_2]
+                     * One of two formulas chosen randomly, since solution to this exception is not explained in the assignment sheet
+                     * Ax = c: [4][yprime_1] = [(3 / h) * y_2 - (3 / h) * y_0 - (yprime_0 | yprime_2)]
+                     * yprime_1 = [(3 / h) * y_2 - (3 / h) * y_0 - (yprime_0 | yprime_2)] / 4
+                     */
+                    // yprime[1] = ((3.0 / h) * (y[2] - y[0]) - yprime[0]) / 4.0;
+                    yprime[1] = ((3.0 / h) * (y[2] - y[0]) - yprime[yprime.length - 1]) / 4.0;
+                }          
 	}
 
 	/**
