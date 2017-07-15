@@ -10,15 +10,15 @@ import java.util.Arrays;
 public class Konvergenzordnung {
 	
 	/**
-	 * Festgelegte Differentialgleichung, an der der Konvergenztest durchgeführt wird.
+	 * Festgelegte Differentialgleichung, an der der Konvergenztest durchgefï¿½hrt wird.
 	 */
 	private final ODE testODE;
 	/**
-	 * Startwert bei der Lösung der Differentialgleichung
+	 * Startwert bei der Lï¿½sung der Differentialgleichung
 	 */
 	private final double[] y0;
 	/**
-	 * Wert der Lösung der Differentialgleichung nach T Sekunden.
+	 * Wert der Lï¿½sung der Differentialgleichung nach T Sekunden.
 	 */
 	private final double[] ystar;
 	/**
@@ -63,7 +63,7 @@ public class Konvergenzordnung {
 	}
 	
 	/**
-	 * Berechnet den Fehler in der 2-Norm zwischen der numerischen Lösung yh und der exakten Lösung ystar.
+	 * Berechnet den Fehler in der 2-Norm zwischen der numerischen Lï¿½sung yh und der exakten Lï¿½sung ystar.
 	 * 
 	 * @return e_h = ||yh - yexact||_2
 	 */
@@ -80,18 +80,22 @@ public class Konvergenzordnung {
 	}
 	
 	/**
-	 * Diese Methode schätzt die Konvergenzordnung des gegebenen Verfahrens ab.
+	 * Diese Methode schï¿½tzt die Konvergenzordnung des gegebenen Verfahrens ab.
 	 * 
 	 * @param verfahren das zu testende Verfahren
-	 * @param h Die Schrittweite h, für die die Abschätzung der Ordnung durchgeführt werden soll.
+	 * @param h Die Schrittweite h, fï¿½r die die Abschï¿½tzung der Ordnung durchgefï¿½hrt werden soll.
 	 * @return Ordnung p
 	 */
 	public double order(Einschrittverfahren verfahren, double h)
 	{
-		// TODO: diese Methode ist zu implementieren
-		
-		double p = 0.0;
-		
+		// double p = 0.0;
+                double p;
+                double h_1 = h;
+                double h_2 = h / 2;
+                double e_h_1 = error(integrate(verfahren, h_1));
+                double e_h_2 = error(integrate(verfahren, h_2));
+		p = Math.log(e_h_1 / e_h_2) / Math.log(h_1 / h_2);
+                // p = (int) p; // Line used to round number down
 		return p;
 	}
 }
